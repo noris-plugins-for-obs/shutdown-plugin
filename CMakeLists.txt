@@ -57,7 +57,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 	Qt::Core
 	Qt::Widgets
 	Qt::Gui
-	Qt::GuiPrivate
 )
 
 target_include_directories(${PROJECT_NAME}
