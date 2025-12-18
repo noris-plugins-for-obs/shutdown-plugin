@@ -17,8 +17,6 @@ Homepage: https://github.com/norihiro/obs-shutdown-plugin
 Package: shutdown-plugin-for-obs
 Architecture: any
 Multi-Arch: foreign
-Depends:
- ${shlibs:Depends},
- ${misc:Depends},
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: plugin to shutdown OBS Studio through websocket
 

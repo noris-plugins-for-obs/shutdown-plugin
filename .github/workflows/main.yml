@@ -16,6 +16,7 @@ on:
 
 env:
   artifactName: ${{ contains(github.ref_name, '/') && 'artifact' || github.ref_name }}
+  qt: true
 
 jobs:
   linux_build:
@@ -43,6 +44,7 @@ jobs:
         with:
           obs: ${{ matrix.obs }}
           verbose: true
+          qt: ${{ env.qt }}
 
       - name: Build plugin
         run: |
@@ -63,7 +65,7 @@ jobs:
           path: '${{ env.FILE_NAME }}'
       - name: Check package
         run: |
-          . ci/ci_includes.generated.sh
+          . build/ci/ci_includes.generated.sh
           set -ex
           sudo apt install -y '${{ env.FILE_NAME }}'
           ldd /usr/lib/x86_64-linux-gnu/obs-plugins/${PLUGIN_NAME}.so > ldd.out
@@ -74,14 +76,15 @@ jobs:
           ls /usr/share/obs/obs-plugins/${PLUGIN_NAME}/
 
   macos_build:
-    runs-on: ${{ matrix.macos }}
+    runs-on: macos-14
     strategy:
       fail-fast: false
       matrix:
         include:
+          - obs: 28
+            arch: universal
           - obs: 31
             arch: universal
-            macos: macos-15
     defaults:
       run:
         shell: bash
@@ -113,7 +116,7 @@ jobs:
 
       - name: Install Apple Developer Certificate
         if: ${{ github.event_name != 'pull_request' && steps.setup.outputs.haveCodesignIdent == 'true' }}
-        uses: apple-actions/import-codesign-certs@63fff01cd422d4b7b855d40ca1e9d34d2de9427d
+        uses: apple-actions/import-codesign-certs@63fff01cd422d4b7b855d40ca1e9d34d2de9427d # v3.0.0
         with:
           keychain-password: ${{ github.run_id }}
           p12-file-base64: ${{ secrets.MACOS_SIGNING_CERT }}
@@ -137,6 +140,7 @@ jobs:
           arch: ${{ matrix.arch }}
           obs: ${{ matrix.obs }}
           verbose: true
+          qt: ${{ env.qt }}
 
       - name: Build plugin
         run: |
@@ -154,20 +158,17 @@ jobs:
             -D OBS_BUNDLE_CODESIGN_IDENTITY='${{ secrets.MACOS_SIGNING_APPLICATION_IDENTITY }}' \
             ${{ steps.obsdeps.outputs.PLUGIN_CMAKE_OPTIONS }}
           cmake --build build --config RelWithDebInfo
-          echo "PKG_SUFFIX='$PKG_SUFFIX'" >> ci/ci_includes.generated.sh
 
       - name: Prepare package
         run: |
           set -ex
-          . ci/ci_includes.generated.sh
+          . build/ci/ci_includes.generated.sh
           cmake --install build --config RelWithDebInfo --prefix=release
-          (cd release/${PLUGIN_NAME}.plugin/Contents && ../../../ci/macos/change-rpath.sh -obs ${{ matrix.obs }} -lib lib/ MacOS/${PLUGIN_NAME})
-          cp LICENSE release/${PLUGIN_NAME}.plugin/Contents/Resources/LICENSE-$PLUGIN_NAME
 
       - name: Codesign
         if: ${{ github.event_name != 'pull_request' && steps.setup.outputs.haveCodesignIdent == 'true' }}
         run: |
-          . ci/ci_includes.generated.sh
+          . build/ci/ci_includes.generated.sh
           set -ex
           files=(
             $(find release/${PLUGIN_NAME}.plugin/ -name '*.dylib')
@@ -182,7 +183,7 @@ jobs:
 
       - name: Package
         run: |
-          . ci/ci_includes.generated.sh
+          . build/ci/ci_includes.generated.sh
           set -ex
           zipfile=$PWD/package/${PLUGIN_NAME}${PKG_SUFFIX}.zip
           mkdir package
@@ -195,10 +196,9 @@ jobs:
       - name: Productsign
         if: ${{ github.event_name != 'pull_request' && steps.setup.outputs.haveCodesignIdent == 'true' }}
         run: |
-          . ci/ci_includes.generated.sh
+          . build/ci/ci_includes.generated.sh
           pkgfile=package/${PLUGIN_NAME}${PKG_SUFFIX}.pkg
           set -e
-          . ci/ci_includes.generated.sh
           productsign --sign "${{ secrets.MACOS_SIGNING_INSTALLER_IDENTITY }}" $pkgfile package/${PLUGIN_NAME}-signed.pkg
           mv package/${PLUGIN_NAME}-signed.pkg $pkgfile
 
@@ -239,6 +239,7 @@ jobs:
         uses: norihiro/obs-studio-devel-action@v2
         with:
           obs: ${{ matrix.obs }}
+          qt: ${{ env.qt }}
       - name: Build plugin
         run: |
           $CmakeArgs = @(
