@@ -44,7 +44,7 @@ const char *obs_module_name(void)
 
 bool obs_module_load(void)
 {
-	blog(LOG_INFO, "plugin loaded (version %s)", PLUGIN_VERSION);
+	blog(LOG_INFO, "plugin loaded (version %s, %s)", PLUGIN_VERSION, VERSION_DESCRIPTION);
 	return true;
 }
 

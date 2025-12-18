@@ -23,6 +23,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define PLUGIN_NAME "@PROJECT_NAME@"
 #define PLUGIN_VERSION "@PROJECT_VERSION@"
 #define ID_PREFIX "@ID_PREFIX@"
+#define VERSION_DESCRIPTION "@VERSION_DESCRIPTION@"
 
 #define blog(level, msg, ...) blog(level, "[" PLUGIN_NAME "] " msg, ##__VA_ARGS__)
 

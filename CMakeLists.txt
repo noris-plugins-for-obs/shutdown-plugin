@@ -26,6 +26,8 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
 	find_qt(VERSION ${QT_VERSION} COMPONENTS Widgets Core Gui)
 endif()
 
+include(cmake/versionconfig.cmake)
+
 configure_file(
 	src/plugin-macros.h.in
 	plugin-macros.generated.h

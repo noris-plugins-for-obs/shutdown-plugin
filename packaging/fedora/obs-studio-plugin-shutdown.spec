@@ -20,7 +20,8 @@ sed -i -e 's/project(obs-/project(/g' CMakeLists.txt
 sed -i -e 's/.obs-shutdown-plugin.,$/'\''shutdown-plugin'\'', # Removed "obs-" /' example/shutdown.py
 
 %build
-%{cmake} -DLINUX_RPATH=OFF -DQT_VERSION=6 -DINSTALL_LICENSE_FILES:BOOL=OFF
+%{cmake} -DLINUX_RPATH=OFF -DQT_VERSION=6 -DINSTALL_LICENSE_FILES:BOOL=OFF \
+  -DVERSION_DESCRIPTION_OVERRIDE:STRING='%{version}-%{release}'
 %{cmake_build}
 
 %install
