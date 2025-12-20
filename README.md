@@ -9,10 +9,13 @@ This is a simple plugin for OBS Studio to shutdown OBS Studio requested by webso
 - OBS websocket request name: `CallVendorRequest`
 - Pass these data
   ```
-  "vendorName": "obs-shutdown-plugin",
+  "vendorName": "shutdown-plugin",
   "requestType": "shutdown",
   "requestData": request_object
   ```
+
+> [!NOTE]
+> Version 0.3.0 changed `vendorName` to `shutdown-plugin` instead of `obs-shutdown-plugin`.
 
 The `request_object` should have these contents.
 

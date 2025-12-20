@@ -1,5 +1,5 @@
 /*
-OBS Output Filter Plugin
+Shutdown Plugin for OBS Studio
 Copyright (C) 2023 Norihiro Kamae <norihiro@nagater.net>
 
 This program is free software; you can redistribute it and/or modify
@@ -26,59 +26,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <util/util.hpp>
 #include <util/platform.h>
 
-#include <obs-websocket-api.h>
 #include <util/config-file.h>
+#include "shutdown-plugin.h"
 #include "plugin-macros.generated.h"
 
 #define MIN_REASON 8
-
-OBS_DECLARE_MODULE()
-OBS_MODULE_USE_DEFAULT_LOCALE(PLUGIN_NAME, "en-US")
-
-static void shutdown_callback(obs_data_t *request_data, obs_data_t *response_data, void *priv_data);
-
-const char *obs_module_name(void)
-{
-	return obs_module_text("Module.Name");
-}
-
-bool obs_module_load(void)
-{
-	blog(LOG_INFO, "plugin loaded (version %s, %s)", PLUGIN_VERSION, VERSION_DESCRIPTION);
-	return true;
-}
-
-void obs_module_post_load()
-{
-	uint api_version = obs_websocket_get_api_version();
-	if (api_version == 0) {
-		blog(LOG_ERROR, "Unable to fetch obs-websocket plugin API version.");
-		return;
-	}
-	else if (api_version == 1) {
-		blog(LOG_WARNING, "Unsupported obs-websocket plugin API version for calling requests.");
-		return;
-	}
-
-	obs_websocket_vendor vendor = obs_websocket_register_vendor(PLUGIN_NAME);
-	if (!vendor) {
-		blog(LOG_ERROR,
-		     "Vendor registration failed! (obs-websocket should have logged something if installed properly.)");
-		return;
-	}
-
-	if (!obs_websocket_vendor_register_request(vendor, "shutdown", shutdown_callback, NULL)) {
-		blog(LOG_ERROR, "Failed to register 'shutdown' request with obs-websocket.");
-		return;
-	}
-
-	blog(LOG_INFO, "Registered 'shutdown' to obs-websocket");
-}
-
-void obs_module_unload()
-{
-	blog(LOG_INFO, "plugin unloaded");
-}
 
 static bool can_shutdown(bool try_stop)
 {
@@ -172,9 +124,13 @@ static void invoke_exit(void *)
 	exit(0);
 }
 
-static void shutdown_callback(obs_data_t *request_data, obs_data_t *response_data, void *priv_data)
+void shutdown_callback(obs_data_t *request_data, obs_data_t *response_data, void *priv_data)
 {
-	UNUSED_PARAMETER(priv_data);
+	auto *data = static_cast<shutdown_callback_data *>(priv_data);
+
+	if (data && data->deprecation)
+		blog(LOG_WARNING, "warning: %s", data->deprecation);
+
 	UNUSED_PARAMETER(response_data); // TDOO: Implement
 	blog(LOG_INFO, "shutdown is called...");
 

@@ -10,7 +10,7 @@ def main():
     cl = obsws_python.ReqClient(host='localhost', port=4455)
 
     cl.send('CallVendorRequest', {
-        'vendorName': 'obs-shutdown-plugin',
+        'vendorName': 'shutdown-plugin',
         'requestType': 'shutdown',
         'requestData': {
             'reason': f'requested by {sys.argv[0]}',
