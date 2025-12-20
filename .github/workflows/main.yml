@@ -74,6 +74,19 @@ jobs:
             exit 1
           fi
           ls /usr/share/obs/obs-plugins/${PLUGIN_NAME}/
+      - name: 'Setup and test with onsdriver'
+        uses: noris-plugins-for-obs/onsdriver@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          first-time-log: ./logs/
+          skip-packages: shutdown-plugin-for-obs
+      - name: 'Upload logs of onsdriver'
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-${{ env.artifactName }}-linux-obs${{ matrix.obs }}-${{ matrix.ubuntu }}
+          path: logs/*
 
   macos_build:
     runs-on: macos-14
@@ -216,6 +229,21 @@ jobs:
           name: ${{ env.artifactName }}-macos-obs${{ matrix.obs }}-${{ matrix.arch }}
           path: package/*
 
+      - name: 'Setup and test with onsdriver'
+        uses: noris-plugins-for-obs/onsdriver@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          obs-plugins: package/*.zip
+          first-time-log: ./logs/
+
+      - name: 'Upload logs of onsdriver'
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-${{ env.artifactName }}-macos-obs${{ matrix.obs }}-${{ matrix.arch }}
+          path: logs/*
+
   windows_build:
     runs-on: windows-2022
     strategy:
@@ -256,3 +284,16 @@ jobs:
         with:
           name: ${{ env.artifactName }}-windows-obs${{ matrix.obs }}-${{ matrix.arch }}
           path: package/*
+      - name: 'Setup and test with onsdriver'
+        uses: noris-plugins-for-obs/onsdriver@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          obs-plugins: package/*.zip
+          first-time-log: ./logs/
+      - name: 'Upload logs of onsdriver'
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-${{ env.artifactName }}-windows-obs${{ matrix.obs }}-${{ matrix.arch }}
+          path: logs/*
