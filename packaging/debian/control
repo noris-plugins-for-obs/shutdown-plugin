@@ -12,7 +12,7 @@ Build-Depends:
  libxcb1-dev, libx11-xcb-dev, libwayland-dev, libglvnd-dev
 Conflicts: obs-shutdown-plugin
 Standards-Version: 4.6.2
-Homepage: https://github.com/norihiro/obs-shutdown-plugin
+Homepage: https://github.com/noris-plugins-for-obs/shutdown-plugin
 
 Package: shutdown-plugin-for-obs
 Architecture: any

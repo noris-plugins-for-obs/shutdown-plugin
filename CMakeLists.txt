@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(obs-shutdown-plugin VERSION 0.2.1)
+project(shutdown-plugin VERSION 0.2.1)
 
 set(PLUGIN_AUTHOR "Norihiro Kamae")
 
-set(PLUGIN_URL "https://obsproject.com/forum/resources/obs-shutdown-plugin.1725/")
+set(PLUGIN_URL "https://obsproject.com/forum/resources/shutdown-plugin.1725/")
 set(ID_PREFIX "net.nagater.obs-shutdown-plugin.")
 set(MACOS_BUNDLEID "net.nagater.obs-shutdown-plugin")
 set(MACOS_PACKAGE_UUID   "EBAA5BAD-711D-45E4-A721-583791B9AB00")

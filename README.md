@@ -72,7 +72,7 @@ cmake \
 	..
 make -j2
 ```
-Finally, copy `obs-shutdown-plugin.so` and `data` to the obs-plugins folder.
+Finally, copy `shutdown-plugin.so` and `data` to the obs-plugins folder.
 
 See a file [.github/workflows/main.yml](.github/workflows/main.yml) for details.
 
